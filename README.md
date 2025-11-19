@@ -21,7 +21,7 @@ GEO: US, CA
 TRAFFIC: Facebook, TikTok
 PAYOUT: 42.5 USD
 CR: 1.25%
-Tips for formatting:
+## Tips for formatting:
 
 Always use uppercase keywords: OFFER, GEO, TRAFFIC, PAYOUT, CR
 
@@ -31,7 +31,7 @@ Separate multiple GEO or TRAFFIC values with commas
 
 Always include units (USD for payout, % for CR)
 
- Grammar Rules
+ ## Grammar Rules
 go
 Config      := Rule+
 Rule        := OfferRule | GeoRule | TrafficRule | PayoutRule | CRRule
@@ -40,7 +40,7 @@ GeoRule     := "GEO:" <IDENT_LIST>
 TrafficRule := "TRAFFIC:" <IDENT_LIST>
 PayoutRule  := "PAYOUT:" <NUMBER> "USD"
 CRRule      := "CR:" <NUMBER> "%"
- Diagram (Workflow)
+##  Diagram (Workflow)
 pgsql
 +----------------+       +----------------+
 | Read file line | --->  | Match grammar  |
@@ -50,7 +50,7 @@ pgsql
 +----------------+       +----------------+
 |  Parse value   | --->  | Store in struct|
 +----------------+       +----------------+
-How it Works
+## How it Works
 The CLI reads an .offer file line by line.
 
 Each line is matched against the grammar rules.
@@ -67,7 +67,7 @@ pub struct OfferConfig {
 }
 Errors are handled with thiserror in the library and anyhow in tests.
 
- Project Structure
+ ## Project Structure
 bash
 affiliate-config-parser/
 ├── Cargo.toml
@@ -79,12 +79,12 @@ affiliate-config-parser/
 │   └── parser.rs      # Parsing logic
 └── tests/
     └── parser_tests.rs
- CLI Commands
+ ## CLI Commands
 bash
 cargo run -- parse <file>   # Parse an offer file
 cargo run -- help           # Show help
 cargo run -- credits        # Show credits
-Example usage:
+## Example usage:
 
 bash
 cargo run -- parse example.offer
@@ -94,7 +94,7 @@ Tests are located in tests/parser_tests.rs.
 Errors are handled with anyhow.
 Ensure all rules (OFFER, GEO, TRAFFIC, PAYOUT, CR) are tested.
 
- Requirements Coverage
+ ##Requirements Coverage
 ✅ Project name included in Cargo.toml + README
 
 ✅ Brief description
