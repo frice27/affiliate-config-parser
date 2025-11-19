@@ -37,7 +37,7 @@ TrafficRule := "TRAFFIC:" <IDENT_LIST>
 PayoutRule  := "PAYOUT:" <NUMBER> "USD"
 CRRule      := "CR:" <NUMBER> "%"
 ##  Diagram (Workflow)
-pgsql
+```pgsql
 +----------------+       +----------------+
 | Read file line | --->  | Match grammar  |
 +----------------+       +----------------+
