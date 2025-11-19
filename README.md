@@ -28,7 +28,7 @@ Tips for formatting:
 - Always include units (USD for payout, % for CR)
 
  ## Grammar Rules
-go
+```go
 Config      := Rule+
 Rule        := OfferRule | GeoRule | TrafficRule | PayoutRule | CRRule
 OfferRule   := "OFFER:" <STRING>
@@ -36,7 +36,7 @@ GeoRule     := "GEO:" <IDENT_LIST>
 TrafficRule := "TRAFFIC:" <IDENT_LIST>
 PayoutRule  := "PAYOUT:" <NUMBER> "USD"
 CRRule      := "CR:" <NUMBER> "%"
-
+```
 ##  Diagram (Workflow)
 ```pgsql
 +----------------+       +----------------+
@@ -47,7 +47,7 @@ CRRule      := "CR:" <NUMBER> "%"
 +----------------+       +----------------+
 |  Parse value   | --->  | Store in struct|
 +----------------+       +----------------+
-
+```
 ## How it Works
 The CLI reads an .offer file line by line.
 
@@ -76,7 +76,7 @@ Errors are handled with thiserror in the library and anyhow in tests.
 │   └── parser.rs      # Parsing logic
 └── tests/
     └── parser_tests.rs
-
+```
  ## CLI Commands
 bash
 ## Parse an offer file
@@ -88,15 +88,15 @@ cargo run -- credits
 
 ## Example usage:
 
-bash
+```bash
 cargo run -- parse example.offer
  Unit Tests
 Each grammar rule has at least one unit test.
 Tests are located in tests/parser_tests.rs.
 Errors are handled with anyhow.
 Ensure all rules (OFFER, GEO, TRAFFIC, PAYOUT, CR) are tested.
-
- Requirements Coverage
+```
+## Requirements Coverage
 
 ✅ Project name included in Cargo.toml + README
 
