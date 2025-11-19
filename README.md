@@ -1,103 +1,118 @@
-Author: Semchuk Vladyslav 
-affiliate-config-parser
+# 🤑 Affiliate Config Parser
 
-A parser for a simple affiliate marketing configuration language.
-The parser supports GEO rules, traffic sources, daily caps, and payout definitions.
-Technical Description
+A **Rust parser** for affiliate marketing offer configurations.  
+Reads structured offer files and converts them into Rust structs for validation, analysis, and automation.
 
-This project implements a hand-written parser for a custom DSL (domain-specific language) used in affiliate marketing to describe payout configurations.
+---
 
-What is parsed?
+## 📖 Brief Description
 
-The parser reads configuration files with rules like:
+This project parses affiliate offer configuration files written in a **simple DSL**.  
+Each file describes an affiliate offer, its GEO, traffic sources, payout, and conversion rate (CR).  
+The parser validates the syntax, extracts data, and provides a Rust-native representation for further processing.
 
-GEO UA
-SOURCE Facebook
-CAP 100
-PAYOUT 3.50
+---
 
+## 🗂 Example Offer File (`example.offer`)
 
-Each line follows one of the grammar rules.
+```text
+OFFER: "Crypto Pro Max"
+GEO: US, CA
+TRAFFIC: Facebook, TikTok
+PAYOUT: 42.5 USD
+CR: 1.25%
+💡 Tips for formatting:
 
-Grammar
+Always use uppercase keywords: OFFER, GEO, TRAFFIC, PAYOUT, CR
 
-Below are the grammar rules implemented in the parser:
+Use quotes for offer names with spaces
 
+Separate multiple GEO or TRAFFIC values with commas
+
+Always include units (USD for payout, % for CR)
+
+⚙️ Grammar Rules
+go
 Config      := Rule+
-Rule        := GeoRule | SourceRule | CapRule | PayoutRule
-GeoRule     := "GEO" <IDENT>
-SourceRule  := "SOURCE" <IDENT>
-CapRule     := "CAP" <NUMBER>
-PayoutRule  := "PAYOUT" <NUMBER>
+Rule        := OfferRule | GeoRule | TrafficRule | PayoutRule | CRRule
+OfferRule   := "OFFER:" <STRING>
+GeoRule     := "GEO:" <IDENT_LIST>
+TrafficRule := "TRAFFIC:" <IDENT_LIST>
+PayoutRule  := "PAYOUT:" <NUMBER> "USD"
+CRRule      := "CR:" <NUMBER> "%"
+🔹 Diagram (Workflow)
+pgsql
++----------------+       +----------------+
+| Read file line | --->  | Match grammar  |
++----------------+       +----------------+
+        |                      |
+        v                      v
++----------------+       +----------------+
+|  Parse value   | --->  | Store in struct|
++----------------+       +----------------+
+🛠 How it Works
+The CLI reads an .offer file line by line.
 
-How results are used?
+Each line is matched against the grammar rules.
 
-Parsed rules are converted into an internal Rust struct:
+Values are stored in a Rust struct:
 
-GEO → saves the GEO value
+rust
+pub struct OfferConfig {
+    pub name: String,
+    pub geo: Vec<String>,
+    pub traffic: Vec<String>,
+    pub payout: f32,
+    pub cr: f32,
+}
+Errors are handled with thiserror in the library and anyhow in tests.
 
-SOURCE → saves traffic source name
+📂 Project Structure
+bash
+affiliate-config-parser/
+├── Cargo.toml
+├── README.md
+├── Makefile
+├── src/
+│   ├── main.rs        # CLI interface
+│   ├── lib.rs         # Library entry
+│   └── parser.rs      # Parsing logic
+└── tests/
+    └── parser_tests.rs
+💻 CLI Commands
+bash
+cargo run -- parse <file>   # Parse an offer file
+cargo run -- help           # Show help
+cargo run -- credits        # Show credits
+Example usage:
 
-CAP → saves integer daily cap
+bash
+cargo run -- parse example.offer
+🧪 Unit Tests
+Each grammar rule has at least one unit test.
+Tests are located in tests/parser_tests.rs.
+Errors are handled with anyhow.
+Ensure all rules (OFFER, GEO, TRAFFIC, PAYOUT, CR) are tested.
 
-PAYOUT → saves float payout amount
+🎯 Requirements Coverage
+✅ Project name included in Cargo.toml + README
 
-This structure can then be used to:
+✅ Brief description
 
-validate campaign settings
+✅ Technical parsing description
 
-generate affiliate configurations
+✅ 4+ grammar rules
 
-send data to APIs
+✅ Unit tests
 
-store rules in a database
+✅ lib.rs and main.rs
 
- Project Structure
-src/
- ├── lib.rs        # exposes parser API
- ├── parser.rs     # main parsing logic
- └── main.rs       # CLI interface
+✅ CLI
 
-tests/
- └── parser_tests.rs
+✅ Error handling: thiserror + anyhow
 
-Cargo.toml
-Makefile
-README.md
+✅ Diagram / grammar included
 
- Unit Tests
+✅ Documentation for each rule
 
-All grammar rules have at least one test in tests/parser_tests.rs.
-Tests use anyhow for error handling and ensure full rule coverage.
-
-CLI
-
-Program supports:
-
-cargo run -- parse <file>
-cargo run -- help
-cargo run -- credits
-
- Requirements Coverage
-
-✔ Project name included in Cargo.toml + README
-
-✔ Brief description
-
-✔ Technical parsing description
-
-✔ 4 grammar rules
-
-✔ Unit tests
-
-✔ lib.rs and main.rs
-
-✔ CLI
-
-✔ Error handling: thiserror + anyhow
-
-✔ Diagram / grammar included
-
-✔ Documentation for each rule
-
-✔ Ready for crates.io release
+✅ Ready for crates.io release
