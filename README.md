@@ -64,7 +64,6 @@ pub struct OfferConfig {
 Errors are handled with thiserror in the library and anyhow in tests.
 
  ## Project Structure
-bash
 affiliate-config-parser/
 ├── Cargo.toml
 ├── README.md
@@ -75,6 +74,7 @@ affiliate-config-parser/
 │   └── parser.rs      # Parsing logic
 └── tests/
     └── parser_tests.rs
+
  ## CLI Commands
 bash
 ## Parse an offer file
