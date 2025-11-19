@@ -15,21 +15,17 @@ The parser validates the syntax, extracts data, and provides a Rust-native repre
 
 ##  Example Offer File (`example.offer`)
 
-```text
 OFFER: "Crypto Pro Max"
 GEO: US, CA
 TRAFFIC: Facebook, TikTok
 PAYOUT: 42.5 USD
 CR: 1.25%
-## Tips for formatting:
 
-Always use uppercase keywords: OFFER, GEO, TRAFFIC, PAYOUT, CR
-
-Use quotes for offer names with spaces
-
-Separate multiple GEO or TRAFFIC values with commas
-
-Always include units (USD for payout, % for CR)
+Tips for formatting:
+- Always use uppercase keywords: OFFER, GEO, TRAFFIC, PAYOUT, CR
+- Use quotes for offer names with spaces
+- Separate multiple GEO or TRAFFIC values with commas
+- Always include units (USD for payout, % for CR)
 
  ## Grammar Rules
 go
