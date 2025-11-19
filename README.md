@@ -77,12 +77,13 @@ affiliate-config-parser/
     └── parser_tests.rs
  ## CLI Commands
 bash
+## Parse an offer file
 cargo run -- parse <file>  
-# Parse an offer file
+## Show help
 cargo run -- help         
-# Show help
+## Show credits
 cargo run -- credits      
-# Show credits
+
 ## Example usage:
 
 bash
