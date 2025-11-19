@@ -36,6 +36,7 @@ GeoRule     := "GEO:" <IDENT_LIST>
 TrafficRule := "TRAFFIC:" <IDENT_LIST>
 PayoutRule  := "PAYOUT:" <NUMBER> "USD"
 CRRule      := "CR:" <NUMBER> "%"
+
 ##  Diagram (Workflow)
 ```pgsql
 +----------------+       +----------------+
@@ -46,6 +47,7 @@ CRRule      := "CR:" <NUMBER> "%"
 +----------------+       +----------------+
 |  Parse value   | --->  | Store in struct|
 +----------------+       +----------------+
+
 ## How it Works
 The CLI reads an .offer file line by line.
 
