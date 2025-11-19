@@ -90,7 +90,8 @@ Tests are located in tests/parser_tests.rs.
 Errors are handled with anyhow.
 Ensure all rules (OFFER, GEO, TRAFFIC, PAYOUT, CR) are tested.
 
- ##Requirements Coverage
+ Requirements Coverage
+
 ✅ Project name included in Cargo.toml + README
 
 ✅ Brief description
