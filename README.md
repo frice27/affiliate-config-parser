@@ -64,7 +64,7 @@ pub struct OfferConfig {
 Errors are handled with thiserror in the library and anyhow in tests.
 
  ## Project Structure
-affiliate-config-parser/
+```affiliate-config-parser/
 ├── Cargo.toml
 ├── README.md
 ├── Makefile
