@@ -12,8 +12,8 @@ pub struct OfferConfig {
     pub traffic: Vec<String>,
     pub payout: f32,
     pub cr: f32,
-    pub cap: Option<u32>,       // NEW RULE
-    pub vertical: Option<String>, // NEW RULE
+    pub cap: Option<u32>,
+    pub vertical: Option<String>,
 }
 
 /// Errors returned by the parser
@@ -47,8 +47,8 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
     let reader = io::BufReader::new(file);
 
     let mut name = None;
-    let mut geo: Vec<String> = Vec::new();
-    let mut traffic: Vec<String> = Vec::new();
+    let mut geo = None;
+    let mut traffic = None;
     let mut payout = None;
     let mut cr = None;
     let mut cap = None;
@@ -76,20 +76,44 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
 
         // GEO
         else if line.starts_with("GEO:") {
-            let value = line["GEO:".len()..].trim();
-            if value.is_empty() {
+            if geo.is_some() {
+                return Err(ParseError::DuplicateField("GEO".to_string()));
+            }
+            let raw = line["GEO:".len()..].trim();
+            if raw.is_empty() {
                 return Err(ParseError::EmptyValue("GEO".to_string()));
             }
-            geo = value.split(',').map(|s| s.trim().to_string()).collect();
+            let list: Vec<String> = raw
+                .split(',')
+                .map(|s| s.trim().to_string())
+                .collect();
+
+            if list.iter().any(|v| v.is_empty()) {
+                return Err(ParseError::EmptyValue("GEO".to_string()));
+            }
+
+            geo = Some(list);
         }
 
         // TRAFFIC
         else if line.starts_with("TRAFFIC:") {
-            let value = line["TRAFFIC:".len()..].trim();
-            if value.is_empty() {
+            if traffic.is_some() {
+                return Err(ParseError::DuplicateField("TRAFFIC".to_string()));
+            }
+            let raw = line["TRAFFIC:".len()..].trim();
+            if raw.is_empty() {
                 return Err(ParseError::EmptyValue("TRAFFIC".to_string()));
             }
-            traffic = value.split(',').map(|s| s.trim().to_string()).collect();
+            let list: Vec<String> = raw
+                .split(',')
+                .map(|s| s.trim().to_string())
+                .collect();
+
+            if list.iter().any(|v| v.is_empty()) {
+                return Err(ParseError::EmptyValue("TRAFFIC".to_string()));
+            }
+
+            traffic = Some(list);
         }
 
         // PAYOUT
@@ -101,7 +125,7 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
             if !value.ends_with("USD") {
                 return Err(ParseError::InvalidFormat(line.to_string()));
             }
-            let number = value[..value.len()-3].trim();
+            let number = value[..value.len() - 3].trim();
             payout = Some(number.parse::<f32>().map_err(|_| {
                 ParseError::InvalidNumber(line.to_string())
             })?);
@@ -116,33 +140,36 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
             if !value.ends_with('%') {
                 return Err(ParseError::InvalidFormat(line.to_string()));
             }
-            let number = value[..value.len()-1].trim();
+            let number = value[..value.len() - 1].trim();
             cr = Some(number.parse::<f32>().map_err(|_| {
                 ParseError::InvalidNumber(line.to_string())
             })?);
         }
 
-        // CAP (NEW RULE)
+        // CAP
         else if line.starts_with("CAP:") {
             if cap.is_some() {
                 return Err(ParseError::DuplicateField("CAP".to_string()));
             }
-            let value = line["CAP:".len()..].trim();
-            cap = Some(value.parse::<u32>().map_err(|_| {
+            let raw = line["CAP:".len()..].trim();
+            if raw.is_empty() {
+                return Err(ParseError::EmptyValue("CAP".to_string()));
+            }
+            cap = Some(raw.parse::<u32>().map_err(|_| {
                 ParseError::InvalidNumber(line.to_string())
             })?);
         }
 
-        // VERTICAL (NEW RULE)
+        // VERTICAL
         else if line.starts_with("VERTICAL:") {
             if vertical.is_some() {
                 return Err(ParseError::DuplicateField("VERTICAL".to_string()));
             }
-            let value = line["VERTICAL:".len()..].trim();
-            if value.is_empty() {
+            let raw = line["VERTICAL:".len()..].trim();
+            if raw.is_empty() {
                 return Err(ParseError::EmptyValue("VERTICAL".to_string()));
             }
-            vertical = Some(value.to_string());
+            vertical = Some(raw.trim().to_string());
         }
 
         // UNKNOWN RULE
@@ -153,8 +180,8 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
 
     Ok(OfferConfig {
         name: name.ok_or(ParseError::MissingField("OFFER".to_string()))?,
-        geo,
-        traffic,
+        geo: geo.unwrap_or_default(),
+        traffic: traffic.unwrap_or_default(),
         payout: payout.ok_or(ParseError::MissingField("PAYOUT".to_string()))?,
         cr: cr.ok_or(ParseError::MissingField("CR".to_string()))?,
         cap,
