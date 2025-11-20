@@ -5,7 +5,7 @@ edition = "2021"
 description = "A parser for a simple affiliate marketing configuration language. Parses GEO rules, traffic sources, caps, and payouts."
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/<your-username>/affiliate-config-parser"
+repository = "https://github.com/frice27/affiliate-config-parser"
 
 [dependencies]
 thiserror = "1.0"
