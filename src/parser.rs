@@ -4,39 +4,59 @@ use std::path::Path;
 
 use thiserror::Error;
 
-/// Struct representing an affiliate offer configuration
+/// Represents an affiliate offer configuration parsed from a `.offer` file.
 #[derive(Debug, Clone, PartialEq)]
 pub struct OfferConfig {
+    /// Name of the offer (OFFER rule)
     pub name: String,
+
+    /// List of GEO codes (GEO rule)
     pub geo: Vec<String>,
+
+    /// List of traffic sources (TRAFFIC rule)
     pub traffic: Vec<String>,
+
+    /// Payout in USD (PAYOUT rule)
     pub payout: f32,
+
+    /// Conversion rate in percent (CR rule)
     pub cr: f32,
+
+    /// Optional daily cap (CAP rule)
     pub cap: Option<u32>,
+
+    /// Optional vertical/category (VERTICAL rule)
     pub vertical: Option<String>,
 }
 
 /// Errors returned by the parser
 #[derive(Error, Debug)]
 pub enum ParseError {
+    /// IO error while reading file
     #[error("IO Error: {0}")]
     Io(#[from] io::Error),
 
+    /// Invalid format for a line
     #[error("Invalid format in line: {0}")]
     InvalidFormat(String),
 
+    /// Missing required field
     #[error("Missing required field: {0}")]
     MissingField(String),
 
+    /// Duplicate field detected
     #[error("Duplicate field detected: {0}")]
     DuplicateField(String),
 
+    /// Unknown rule/key found
     #[error("Unknown rule: {0}")]
     UnknownRule(String),
 
+    /// Invalid number in line
     #[error("Invalid number in line: {0}")]
     InvalidNumber(String),
 
+    /// Empty value for field
     #[error("Empty value for field: {0}")]
     EmptyValue(String),
 }
@@ -58,7 +78,8 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
         let line = line?;
         let line = line.trim();
 
-        if line.is_empty() {
+        // Skip empty lines and comments
+        if line.is_empty() || line.starts_with('#') {
             continue;
         }
 
@@ -85,13 +106,11 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
             }
             let list: Vec<String> = raw
                 .split(',')
-                .map(|s| s.trim().to_string())
+                .map(|s| s.trim().trim_matches('"').to_string())
                 .collect();
-
             if list.iter().any(|v| v.is_empty()) {
                 return Err(ParseError::EmptyValue("GEO".to_string()));
             }
-
             geo = Some(list);
         }
 
@@ -106,13 +125,11 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
             }
             let list: Vec<String> = raw
                 .split(',')
-                .map(|s| s.trim().to_string())
+                .map(|s| s.trim().trim_matches('"').to_string())
                 .collect();
-
             if list.iter().any(|v| v.is_empty()) {
                 return Err(ParseError::EmptyValue("TRAFFIC".to_string()));
             }
-
             traffic = Some(list);
         }
 
@@ -169,7 +186,7 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
             if raw.is_empty() {
                 return Err(ParseError::EmptyValue("VERTICAL".to_string()));
             }
-            vertical = Some(raw.trim().to_string());
+            vertical = Some(raw.trim_matches('"').to_string());
         }
 
         // UNKNOWN RULE
