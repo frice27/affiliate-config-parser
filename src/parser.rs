@@ -82,7 +82,6 @@ pub fn parse_offer_file<P: AsRef<Path>>(file_path: P) -> Result<OfferConfig, Par
         }
     }
 
-    // Check required fields
     let name = name.ok_or(ParseError::MissingField("OFFER".to_string()))?;
     let payout = payout.ok_or(ParseError::MissingField("PAYOUT".to_string()))?;
     let cr = cr.ok_or(ParseError::MissingField("CR".to_string()))?;
